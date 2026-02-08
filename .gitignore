@@ -1,0 +1,4 @@
+# Ignora completamente la cartella dell'ambiente virtuale e i file temporanei di Python.
+.venv/
+__pycache__/
+*.pyc
