@@ -1,4 +1,14 @@
-# Ignora completamente la cartella dell'ambiente virtuale e i file temporanei di Python.
+# --- Python File temporanei e compilati ---
+__pycache__/             
+*.py[cod]                
+*$py.class
+
+# --- Ambienti Virtuali e Segreti ---
+venv/                     
 .venv/
-__pycache__/
-*.pyc
+env/
+ENV/
+
+# --- Cartelle Dati ---
+resources/*
+!resources/.gitkeep
