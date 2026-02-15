@@ -1,9 +1,9 @@
 import streamlit as st
 from engine import salva_misurazioni, carica_dati, interpreta_bmi, ALTEZZA
 
-st.set_page_config(page_title="Dieta & Progressi Domenico", layout="wide")
+st.set_page_config(page_title="Dieta & Progressi", layout="wide")
 
-st.title("🏃‍♂️ Diario Dieta e Misure - Domenico")
+st.title("🏃‍♂️ Diario Dieta e Misure")
 
 # Sidebar per inserimento dati
 st.sidebar.header("Inserisci Nuove Misure")
@@ -45,4 +45,4 @@ if df is not None:
     # Grafico del peso
     st.line_chart(df.set_index("Data")["Peso"])
 else:
-    st.info("Benvenuto Domenico! Inserisci la tua prima misurazione per iniziare a tracciare i progressi.")
+    st.info("Benvenuto! Inserisci la tua prima misurazione per iniziare a tracciare i progressi.")
