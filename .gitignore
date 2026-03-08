@@ -19,3 +19,8 @@ env/
 # 5. File di sistema
 .DS_Store
 Thumbs.db
+
+# nascondo file nella cartella resources
+resources/
+guida_chetogenica.ipynb
+guida_chetogenica.pdf
