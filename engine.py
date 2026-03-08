@@ -2,7 +2,7 @@ import pandas as pd
 import os
 
 ALTEZZA = 1.76
-FILE_DATI = "resources/dieta_progressi.csv"
+FILE_DATI = "dieta_progressi.csv"
 
 
 def calcola_bmi(peso):
