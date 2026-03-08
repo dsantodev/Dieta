@@ -22,5 +22,4 @@ Thumbs.db
 
 # nascondo file nella cartella resources
 resources/
-guida_chetogenica.ipynb
-guida_chetogenica.pdf
+!geetkeep
