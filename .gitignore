@@ -1,14 +1,21 @@
-# --- Python File temporanei e compilati ---
-__pycache__/             
-*.py[cod]                
+# 1. Ambiente virtuale
+venv/
+.venv/
+
+# 2. File compilati di Python e cache
+__pycache__/
+*.py[cod] 
+# È un modo contratto per dire a Git di ignorare tutti i file con estensione .pyc, .pyo o .pyd.
 *$py.class
 
-# --- Ambienti Virtuali e Segreti ---
-venv/                     
-.venv/
+# 3. Chiavi di accesso e variabili d'ambiente
 env/
-ENV/
+.env
 
-# --- Cartelle Dati ---
-# resources/*
-# !resources/.gitkeep
+# 4. (Opzionale) Configurazione dell'editor
+.vscode/
+.idea/
+
+# 5. File di sistema
+.DS_Store
+Thumbs.db
