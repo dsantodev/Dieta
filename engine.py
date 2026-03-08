@@ -1,19 +1,21 @@
 import json
 from pathlib import Path
-
 import pandas as pd
 
 FILE_DATI = Path("dieta_progressi.csv")
 FILE_CONFIG = Path("config.json")
-COLONNE = ["Data", "Peso", "BMI", "Polso", "Torace", "Vita", "Fianchi", "Coscia", "Collo"]
+COLONNE = ["Data", "Peso", "BMI", "Polso",
+           "Torace", "Vita", "Fianchi", "Coscia", "Collo"]
 
 
 def salva_config(config: dict) -> None:
+    # Salva il profilo utente (nome, altezza, ecc.) in formato JSON.
     with FILE_CONFIG.open("w", encoding="utf-8") as f:
         json.dump(config, f, indent=2, ensure_ascii=False)
 
 
 def carica_config() -> dict | None:
+    # Se non esiste config, l'app mostrerà il setup iniziale.
     if not FILE_CONFIG.is_file():
         return None
 
@@ -22,6 +24,7 @@ def carica_config() -> dict | None:
 
 
 def calcola_bmi(peso: float, altezza_m: float) -> float:
+    # BMI = peso / altezza^2 (altezza in metri).
     bmi = float(peso) / (float(altezza_m) ** 2)
     return round(bmi, 2)
 
@@ -37,10 +40,12 @@ def interpreta_bmi(bmi: float) -> str:
 
 
 def _normalizza_dataframe(df: pd.DataFrame, altezza_m: float) -> pd.DataFrame:
+    # Garanzia schema: se mancano colonne, le creo.
     for col in COLONNE:
         if col not in df.columns:
             df[col] = pd.NA
 
+    # Conversioni sicure per evitare problemi da modifiche manuali in tabella.
     df = df[COLONNE].copy()
     df["Data"] = pd.to_datetime(df["Data"], errors="coerce")
     df["Peso"] = pd.to_numeric(df["Peso"], errors="coerce")
@@ -48,13 +53,17 @@ def _normalizza_dataframe(df: pd.DataFrame, altezza_m: float) -> pd.DataFrame:
         df[col] = pd.to_numeric(df[col], errors="coerce")
 
     df = df.dropna(subset=["Data", "Peso"])
+    # Il BMI viene sempre ricalcolato lato engine, mai fidarsi del valore in input.
     df["BMI"] = df["Peso"].apply(lambda p: calcola_bmi(p, altezza_m))
-    df = df.sort_values(by="Data").drop_duplicates(subset=["Data"], keep="last")
+    # Se la stessa data è inserita più volte, tengo l'ultima versione.
+    df = df.sort_values(by="Data").drop_duplicates(
+        subset=["Data"], keep="last")
     df["Data"] = df["Data"].dt.date
     return df.reset_index(drop=True)
 
 
 def salva_misurazioni(data, peso, polso, torace, vita, fianchi, coscia, collo, altezza_m: float):
+    # Salvataggio "append logico": unisco al vecchio storico e poi ripulisco tutto.
     nuovi_dati = pd.DataFrame([{
         "Data": data,
         "Peso": peso,
@@ -78,11 +87,13 @@ def salva_misurazioni(data, peso, polso, torace, vita, fianchi, coscia, collo, a
 
 def aggiorna_tutto(df: pd.DataFrame, altezza_m: float):
     """Sovrascrive il CSV con i dati modificati dall'editor, ricalcolando il BMI."""
+    # Usato dal data_editor: normalizza e riscrive l'intero storico.
     pulito = _normalizza_dataframe(df.copy(), altezza_m)
     pulito.to_csv(FILE_DATI, index=False)
 
 
 def carica_dati() -> pd.DataFrame | None:
+    # Ritorna None se non c'è ancora storico.
     if not FILE_DATI.is_file():
         return None
 

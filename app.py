@@ -13,6 +13,7 @@ from engine import (
 
 st.set_page_config(page_title="Dieta & Progressi", layout="wide")
 
+# Stili minimi per rendere metriche e sidebar più leggibili.
 st.markdown(
     """
     <style>
@@ -31,9 +32,11 @@ st.markdown(
     unsafe_allow_html=True
 )
 
+# Carico subito configurazione profilo e storico dati.
 config = carica_config()
 df = carica_dati()
 
+# Primo avvio: se manca config, blocco l'app normale e mostro solo il wizard iniziale.
 if config is None:
     st.title("Setup iniziale Diario Dieta")
     st.info("Compila i dati base. Verrà creato automaticamente il nuovo profilo.")
@@ -67,6 +70,7 @@ if config is None:
         crea_config = st.form_submit_button("Crea profilo")
 
     if crea_config:
+        # Normalizzo i dati utente e converto altezza in metri per il calcolo BMI.
         nome_pulito = nome.strip() or "Utente"
         config = {
             "nome": nome_pulito,
@@ -76,6 +80,7 @@ if config is None:
         }
         salva_config(config)
 
+        # Opzionale: crea già la prima riga nello storico per evitare file vuoto.
         if salva_prima_misura:
             salva_misurazioni(
                 date.today(),
@@ -100,6 +105,7 @@ altezza_m = float(config.get("altezza_m", 1.76))
 st.title(f"Diario Dieta e Misure di {nome_utente}")
 
 if df is not None:
+    # Pulizia base: data valida + ordinamento cronologico.
     df = df.copy()
     df["Data"] = pd.to_datetime(df["Data"], errors="coerce")
     df = df.dropna(subset=["Data"]).sort_values(
@@ -107,6 +113,7 @@ if df is not None:
 
 
 def _last_or_default(colonna: str, fallback: float) -> float:
+    # Usato per precompilare i campi con l'ultima misura disponibile.
     if df is None or df.empty or colonna not in df.columns:
         return fallback
     valore = df[colonna].iloc[-1]
@@ -122,6 +129,7 @@ if df is not None and not df.empty:
 with st.sidebar:
     st.header("Parametri Biometrici")
     with st.form("form_misure", clear_on_submit=False):
+        # clear_on_submit=False mantiene i valori dell'ultimo inserimento nel form.
         data = st.date_input("Data misurazione", value=date.today())
         peso = st.number_input(
             "Peso (kg)",
@@ -155,6 +163,7 @@ with st.sidebar:
         submit = st.form_submit_button("Salva Progressi")
 
 if submit:
+    # Tutte le misure passano da engine, che normalizza e ricalcola BMI.
     salva_misurazioni(data, peso, polso, torace, vita,
                       fianchi, coscia, collo, altezza_m)
     st.success("Dati salvati con successo.")
@@ -163,6 +172,7 @@ if submit:
 df = carica_dati()
 
 if df is not None:
+    # Ricarico dal file dopo eventuali salvataggi per vedere sempre dati reali.
     df = df.copy()
     df["Data"] = pd.to_datetime(df["Data"], errors="coerce")
     df = df.dropna(subset=["Data"]).sort_values(
@@ -181,6 +191,7 @@ if df is not None:
     st.divider()
 
     st.subheader("Andamento Peso nel Tempo")
+    # Filtro intervallo date direttamente da UI per leggere meglio i trend.
     min_data = df["Data"].min().date()
     max_data = df["Data"].max().date()
 
@@ -222,6 +233,7 @@ if df is not None:
     st.divider()
 
     st.subheader("Aggiornamenti Profilo Corporeo:")
+    # L'editor permette correzioni storiche; il salvataggio ricalcola sempre il BMI.
     tabella_df = df.copy()
     tabella_df["Data"] = tabella_df["Data"].dt.date
     edited_df = st.data_editor(
