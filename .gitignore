@@ -22,6 +22,6 @@ Thumbs.db
 
 # 6. Trick per preservare la strittuta ma ignorare il contenuto della cartella
 # Ignora Cartella e tutto il contenuto...
-resources/
+resources/*
 # ...ma tieni traccia dei file .gitkeep (preserva la struttura)
 !**/resources/.gitkeep
