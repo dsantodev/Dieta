@@ -1,11 +1,18 @@
 import json
 from pathlib import Path
+
 import pandas as pd
 
 FILE_DATI = Path("dieta_progressi.csv")
 FILE_CONFIG = Path("config.json")
-COLONNE = ["Data", "Peso", "BMI", "Polso",
-           "Torace", "Vita", "Fianchi", "Coscia", "Collo"]
+COLONNE = ["Data", "Peso", "BMI", "Polso", "Torace", "Vita", "Fianchi", "Coscia", "Collo"]
+FATTORI_ATTIVITA = {
+    "Sedentaria": 1.2,
+    "Leggera (1-3 allenamenti/settimana)": 1.375,
+    "Moderata (3-5 allenamenti/settimana)": 1.55,
+    "Alta (6-7 allenamenti/settimana)": 1.725,
+    "Molto alta (lavoro fisico + allenamento)": 1.9,
+}
 
 
 def salva_config(config: dict) -> None:
@@ -39,6 +46,46 @@ def interpreta_bmi(bmi: float) -> str:
     return "Obesità"
 
 
+def calcola_fabbisogno(
+    peso: float,
+    altezza_m: float,
+    eta: int,
+    sesso: str,
+    attivita: str,
+    perdita_kg_settimana: float,
+) -> dict:
+    """
+    Calcola:
+    - BMR (Mifflin-St Jeor)
+    - TDEE (BMR * fattore attività)
+    - Deficit giornaliero in base al target kg/settimana
+    - Calorie target giornaliere
+    """
+    altezza_cm = float(altezza_m) * 100
+    base = 10 * float(peso) + 6.25 * altezza_cm - 5 * int(eta)
+    s = -161 if sesso == "Donna" else 5
+    bmr = base + s
+
+    fattore = FATTORI_ATTIVITA.get(attivita, 1.2)
+    tdee = bmr * fattore
+
+    # 1 kg di grasso ~ 7700 kcal.
+    deficit_giornaliero = (float(perdita_kg_settimana) * 7700) / 7
+    calorie_target = tdee - deficit_giornaliero
+
+    # Limite prudenziale per evitare target troppo bassi.
+    calorie_minime = bmr * 0.8
+    calorie_target = max(calorie_target, calorie_minime)
+
+    return {
+        "bmr": round(bmr),
+        "tdee": round(tdee),
+        "deficit_giornaliero": round(deficit_giornaliero),
+        "calorie_target": round(calorie_target),
+        "fattore_attivita": fattore,
+    }
+
+
 def _normalizza_dataframe(df: pd.DataFrame, altezza_m: float) -> pd.DataFrame:
     # Garanzia schema: se mancano colonne, le creo.
     for col in COLONNE:
@@ -56,8 +103,7 @@ def _normalizza_dataframe(df: pd.DataFrame, altezza_m: float) -> pd.DataFrame:
     # Il BMI viene sempre ricalcolato lato engine, mai fidarsi del valore in input.
     df["BMI"] = df["Peso"].apply(lambda p: calcola_bmi(p, altezza_m))
     # Se la stessa data è inserita più volte, tengo l'ultima versione.
-    df = df.sort_values(by="Data").drop_duplicates(
-        subset=["Data"], keep="last")
+    df = df.sort_values(by="Data").drop_duplicates(subset=["Data"], keep="last")
     df["Data"] = df["Data"].dt.date
     return df.reset_index(drop=True)
 

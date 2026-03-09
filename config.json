@@ -1,6 +1,9 @@
 {
   "nome": "Domenico",
   "eta": 47,
-  "altezza_m": 1.76,
+  "sesso": "Uomo",
+  "attivita": "Sedentaria",
+  "perdita_kg_settimana": 1.0,
+  "altezza_m": 1.75,
   "peso_iniziale": 138.5
 }
