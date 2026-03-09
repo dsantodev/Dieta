@@ -20,8 +20,8 @@ env/
 .DS_Store
 Thumbs.db
 
-# 6. Trick per preservare la strittuta ma ignorare il contenuto della cartella
 # Ignora Cartella e tutto il contenuto...
-resources/*
-# ...ma tieni traccia dei file .gitkeep (preserva la struttura)
-!**/resources/.gitkeep
+resources/
+# Ignora Cartella e tutto il contenuto...
+data/* 
+!data/config_example.json

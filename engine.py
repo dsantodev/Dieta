@@ -1,11 +1,11 @@
 import json
 from pathlib import Path
-
 import pandas as pd
 
-FILE_DATI = Path("dieta_progressi.csv")
-FILE_CONFIG = Path("config.json")
-COLONNE = ["Data", "Peso", "BMI", "Polso", "Torace", "Vita", "Fianchi", "Coscia", "Collo"]
+FILE_DATI = Path("data/dieta_progressi.csv")
+FILE_CONFIG = Path("data/config.json")
+COLONNE = ["Data", "Peso", "BMI", "Polso",
+           "Torace", "Vita", "Fianchi", "Coscia", "Collo"]
 FATTORI_ATTIVITA = {
     "Sedentaria": 1.2,
     "Leggera (1-3 allenamenti/settimana)": 1.375,
@@ -103,7 +103,8 @@ def _normalizza_dataframe(df: pd.DataFrame, altezza_m: float) -> pd.DataFrame:
     # Il BMI viene sempre ricalcolato lato engine, mai fidarsi del valore in input.
     df["BMI"] = df["Peso"].apply(lambda p: calcola_bmi(p, altezza_m))
     # Se la stessa data è inserita più volte, tengo l'ultima versione.
-    df = df.sort_values(by="Data").drop_duplicates(subset=["Data"], keep="last")
+    df = df.sort_values(by="Data").drop_duplicates(
+        subset=["Data"], keep="last")
     df["Data"] = df["Data"].dt.date
     return df.reset_index(drop=True)
 
