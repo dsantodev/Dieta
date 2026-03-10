@@ -1,5 +1,4 @@
 from datetime import date
-
 import pandas as pd
 import plotly.express as px
 import streamlit as st
@@ -56,9 +55,11 @@ if config is None:
 
     with st.form("setup_iniziale"):
         nome = st.text_input("Come ti chiami?", value="")
-        eta = st.number_input("Età", min_value=1, max_value=120, value=35, step=1)
+        eta = st.number_input("Età", min_value=1,
+                              max_value=120, value=35, step=1)
         sesso = st.selectbox("Sesso", options=["Uomo", "Donna"], index=0)
-        attivita = st.selectbox("Livello attività", options=list(FATTORI_ATTIVITA.keys()), index=0)
+        attivita = st.selectbox("Livello attività", options=list(
+            FATTORI_ATTIVITA.keys()), index=0)
         perdita_kg_settimana = st.selectbox(
             "Obiettivo perdita peso (kg/settimana)",
             options=OBIETTIVI_KG_SETTIMANA,
@@ -66,18 +67,27 @@ if config is None:
             format_func=lambda x: f"{x} kg/settimana",
         )
 
-        altezza_cm = st.number_input("Altezza (cm)", min_value=120.0, max_value=230.0, value=176.0, step=0.1)
-        peso_iniziale = st.number_input("Peso attuale (kg)", min_value=40.0, max_value=300.0, value=100.0, step=0.1)
+        altezza_cm = st.number_input(
+            "Altezza (cm)", min_value=120.0, max_value=230.0, value=176.0, step=0.1)
+        peso_iniziale = st.number_input(
+            "Peso attuale (kg)", min_value=40.0, max_value=300.0, value=100.0, step=0.1)
 
         st.markdown("---")
         st.caption("Prima misurazione (opzionale ma consigliata)")
-        salva_prima_misura = st.checkbox("Salva anche la prima misurazione di oggi", value=True)
-        polso = st.number_input("Polso (cm)", min_value=5.0, max_value=40.0, value=21.0, step=0.1)
-        collo = st.number_input("Collo (cm)", min_value=10.0, max_value=80.0, value=46.0, step=0.1)
-        torace = st.number_input("Torace (cm)", min_value=30.0, max_value=250.0, value=135.0, step=0.1)
-        vita = st.number_input("Vita (cm)", min_value=30.0, max_value=250.0, value=142.0, step=0.1)
-        fianchi = st.number_input("Fianchi (cm)", min_value=30.0, max_value=250.0, value=145.0, step=0.1)
-        coscia = st.number_input("Coscia (cm)", min_value=20.0, max_value=150.0, value=74.0, step=0.1)
+        salva_prima_misura = st.checkbox(
+            "Salva anche la prima misurazione di oggi", value=True)
+        polso = st.number_input(
+            "Polso (cm)", min_value=5.0, max_value=40.0, value=21.0, step=0.1)
+        collo = st.number_input(
+            "Collo (cm)", min_value=10.0, max_value=80.0, value=46.0, step=0.1)
+        torace = st.number_input(
+            "Torace (cm)", min_value=30.0, max_value=250.0, value=135.0, step=0.1)
+        vita = st.number_input("Vita (cm)", min_value=30.0,
+                               max_value=250.0, value=142.0, step=0.1)
+        fianchi = st.number_input(
+            "Fianchi (cm)", min_value=30.0, max_value=250.0, value=145.0, step=0.1)
+        coscia = st.number_input(
+            "Coscia (cm)", min_value=20.0, max_value=150.0, value=74.0, step=0.1)
 
         crea_config = st.form_submit_button("Crea profilo")
 
@@ -127,7 +137,8 @@ if df is not None:
     # Pulizia base: data valida + ordinamento cronologico.
     df = df.copy()
     df["Data"] = pd.to_datetime(df["Data"], errors="coerce")
-    df = df.dropna(subset=["Data"]).sort_values(by="Data").reset_index(drop=True)
+    df = df.dropna(subset=["Data"]).sort_values(
+        by="Data").reset_index(drop=True)
 
 
 def _last_or_default(colonna: str, fallback: float) -> float:
@@ -149,7 +160,8 @@ with st.sidebar:
             "Peso (kg)",
             min_value=40.0,
             max_value=300.0,
-            value=_last_or_default("Peso", float(config.get("peso_iniziale", 100.0))),
+            value=_last_or_default("Peso", float(
+                config.get("peso_iniziale", 100.0))),
             step=0.1,
         )
 
@@ -162,21 +174,29 @@ with st.sidebar:
             step=0.1,
             help="Misura il polso subito sopra l'osso della mano",
         )
-        collo = st.number_input("Collo (cm)", min_value=10.0, max_value=80.0, value=_last_or_default("Collo", 46.0), step=0.1)
-        torace = st.number_input("Torace (cm)", min_value=30.0, max_value=250.0, value=_last_or_default("Torace", 135.0), step=0.1)
-        vita = st.number_input("Vita (cm)", min_value=30.0, max_value=250.0, value=_last_or_default("Vita", 142.0), step=0.1)
-        fianchi = st.number_input("Fianchi (cm)", min_value=30.0, max_value=250.0, value=_last_or_default("Fianchi", 145.0), step=0.1)
-        coscia = st.number_input("Coscia (cm)", min_value=20.0, max_value=150.0, value=_last_or_default("Coscia", 74.0), step=0.1)
+        collo = st.number_input("Collo (cm)", min_value=10.0, max_value=80.0,
+                                value=_last_or_default("Collo", 46.0), step=0.1)
+        torace = st.number_input("Torace (cm)", min_value=30.0, max_value=250.0,
+                                 value=_last_or_default("Torace", 135.0), step=0.1)
+        vita = st.number_input("Vita (cm)", min_value=30.0, max_value=250.0,
+                               value=_last_or_default("Vita", 142.0), step=0.1)
+        fianchi = st.number_input("Fianchi (cm)", min_value=30.0, max_value=250.0,
+                                  value=_last_or_default("Fianchi", 145.0), step=0.1)
+        coscia = st.number_input("Coscia (cm)", min_value=20.0, max_value=150.0,
+                                 value=_last_or_default("Coscia", 74.0), step=0.1)
 
         submit = st.form_submit_button("Salva Progressi")
 
     with st.expander("Obiettivo calorico"):
-        sesso_ui = st.selectbox("Sesso", options=["Uomo", "Donna"], index=_indice_opzione(["Uomo", "Donna"], sesso, 0))
-        attivita_ui = st.selectbox("Livello attività", options=list(FATTORI_ATTIVITA.keys()), index=_indice_opzione(list(FATTORI_ATTIVITA.keys()), attivita, 0))
+        sesso_ui = st.selectbox("Sesso", options=[
+                                "Uomo", "Donna"], index=_indice_opzione(["Uomo", "Donna"], sesso, 0))
+        attivita_ui = st.selectbox("Livello attività", options=list(FATTORI_ATTIVITA.keys(
+        )), index=_indice_opzione(list(FATTORI_ATTIVITA.keys()), attivita, 0))
         perdita_ui = st.selectbox(
             "Perdita peso target",
             options=OBIETTIVI_KG_SETTIMANA,
-            index=_indice_opzione(OBIETTIVI_KG_SETTIMANA, perdita_kg_settimana, 1),
+            index=_indice_opzione(OBIETTIVI_KG_SETTIMANA,
+                                  perdita_kg_settimana, 1),
             format_func=lambda x: f"{x} kg/settimana",
         )
 
@@ -190,7 +210,8 @@ with st.sidebar:
 
 if submit:
     # Tutte le misure passano da engine, che normalizza e ricalcola BMI.
-    salva_misurazioni(data, peso, polso, torace, vita, fianchi, coscia, collo, altezza_m)
+    salva_misurazioni(data, peso, polso, torace, vita,
+                      fianchi, coscia, collo, altezza_m)
     st.success("Dati salvati con successo.")
     st.rerun()
 
@@ -200,10 +221,12 @@ if df is not None:
     # Ricarico dal file dopo eventuali salvataggi per vedere sempre dati reali.
     df = df.copy()
     df["Data"] = pd.to_datetime(df["Data"], errors="coerce")
-    df = df.dropna(subset=["Data"]).sort_values(by="Data").reset_index(drop=True)
+    df = df.dropna(subset=["Data"]).sort_values(
+        by="Data").reset_index(drop=True)
 
     ultimo_peso = float(df["Peso"].iloc[-1])
-    precedente_peso = float(df["Peso"].iloc[-2]) if len(df) > 1 else ultimo_peso
+    precedente_peso = float(
+        df["Peso"].iloc[-2]) if len(df) > 1 else ultimo_peso
     delta_peso = round(ultimo_peso - precedente_peso, 2)
 
     fabbisogno = calcola_fabbisogno(
@@ -216,7 +239,8 @@ if df is not None:
     )
 
     col1, col2, col3 = st.columns(3)
-    col1.metric("Peso Attuale", f"{ultimo_peso:.1f} kg", delta=f"{delta_peso:+.2f} kg", delta_color="inverse")
+    col1.metric("Peso Attuale", f"{ultimo_peso:.1f} kg",
+                delta=f"{delta_peso:+.2f} kg", delta_color="inverse")
     col2.metric("BMI", df["BMI"].iloc[-1])
     col3.metric("Stato", interpreta_bmi(float(df["BMI"].iloc[-1])))
 
@@ -258,10 +282,13 @@ if df is not None:
     max_data = df["Data"].max().date()
 
     filtro1, filtro2 = st.columns(2)
-    data_da = filtro1.date_input("Dal", value=min_data, min_value=min_data, max_value=max_data)
-    data_a = filtro2.date_input("Al", value=max_data, min_value=min_data, max_value=max_data)
+    data_da = filtro1.date_input(
+        "Dal", value=min_data, min_value=min_data, max_value=max_data)
+    data_a = filtro2.date_input(
+        "Al", value=max_data, min_value=min_data, max_value=max_data)
 
-    filtro_df = df[(df["Data"].dt.date >= data_da) & (df["Data"].dt.date <= data_a)].copy()
+    filtro_df = df[(df["Data"].dt.date >= data_da) &
+                   (df["Data"].dt.date <= data_a)].copy()
     if filtro_df.empty:
         st.warning("Nessun dato nel range selezionato.")
     else:
@@ -273,7 +300,8 @@ if df is not None:
             text="Peso",
             title="Variazione Peso Corporeo",
         )
-        fig.update_traces(textposition="top center", line_color="#007BFF", marker_size=10)
+        fig.update_traces(textposition="top center",
+                          line_color="#007BFF", marker_size=10)
         fig.update_layout(
             xaxis_title="Data",
             yaxis_title="Peso (kg)",
