@@ -1,9 +1,11 @@
 {
-  "nome": "Pinco",
-  "eta": 31,
-  "sesso": "Uomo",
+  "nome": "Giada",
+  "eta": 42,
+  "sesso": "Donna",
   "attivita": "Sedentaria",
-  "perdita_kg_settimana": 1.0,
-  "altezza_m": 1.75,
-  "peso_iniziale": 115.5
+  "obiettivo": "aumentare",
+  "kg_settimana": 0.5,
+  "altezza_m": 1.6,
+  "peso_iniziale": 49.0,
+  "tema": "win_dark"
 }
