@@ -22,6 +22,7 @@ Thumbs.db
 
 # Ignora Cartella e tutto il contenuto...
 resources/
-# Ignora Cartella e tutto il contenuto...
+
+# Ignora Cartella e tutto il contenuto... tranne config_example.json
 data/* 
 !data/config_example.json
